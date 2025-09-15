@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxZoom: 300
-  minZoom: 150
+  minZoom: 0
   panSpeed: 6
   cam: {fileID: 519420031}
 --- !u!1 &837063556
@@ -730,8 +730,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: d6bbde22c2c7bf745a50716299a65e4b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 5eeafd053c040e04db34321c9a0b709c, type: 3}
+  m_Resource: {fileID: 8300000, guid: 5eeafd053c040e04db34321c9a0b709c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.25
   m_Pitch: 1
@@ -1176,8 +1176,8 @@ MonoBehaviour:
   effects: {fileID: 1520155635}
   audioCli:
   - {fileID: 8300000, guid: 24af12f67e17876458d19979c6532411, type: 3}
-  - {fileID: 8300000, guid: 4e8eb78e1a0d9024584025025197a3db, type: 3}
-  - {fileID: 8300000, guid: 57f370428497f9e4f95aea91953ebce6, type: 3}
+  - {fileID: 8300000, guid: 8434b80be674bc14ca1a89a3322eeabc, type: 3}
+  - {fileID: 8300000, guid: 408df7a417ebc0f429ed5192c5f573b2, type: 3}
   - {fileID: 8300000, guid: 8629d5a0aa2a26f479dfda37c59569a9, type: 3}
   - {fileID: 8300000, guid: da205ed304ee5e04dbdb2d55ea17e834, type: 3}
   rightPlace: 0
