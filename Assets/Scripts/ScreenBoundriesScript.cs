@@ -4,7 +4,7 @@ public class ScreenBoundriesScript : MonoBehaviour
 {
     [HideInInspector]
     public Vector3 screenPoint, offset;
-    private float minX, maxX, minY, maxY;
+    public float minX, maxX, minY, maxY;
     public float padding = 0.02f;
 
    

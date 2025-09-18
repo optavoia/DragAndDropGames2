@@ -46,13 +46,13 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                     switch (eventData.pointerDrag.tag)
                     {
                         case "Garbage":
-                            objScript.effects.PlayOneShot(objScript.audioCli[2]);
+                            objScript.effects.PlayOneShot(objScript.audioCli[0]);
                             break;
                         case "Medicine":
-                            objScript.effects.PlayOneShot(objScript.audioCli[3]);
+                            objScript.effects.PlayOneShot(objScript.audioCli[1]);
                             break;
                         case "Fire":
-                            objScript.effects.PlayOneShot(objScript.audioCli[4]);
+                            objScript.effects.PlayOneShot(objScript.audioCli[2]);
                             break;
                         default:
                             Debug.Log("UNknown tag detekted");

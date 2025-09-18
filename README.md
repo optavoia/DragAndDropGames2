@@ -12,3 +12,5 @@ Drag and drop game - unity 2d drag and drop games for children +6
 - [x] Create C# script for camera -> zoom-in/out and camera restrictions
 - [x] Create animated main menu 3 buttons, sounds
 - [x] Can exit and start play
+- [x] Add animated clouds, vehicles, people, animals.
+- [x] Add flying obstacles with destroy effects.
