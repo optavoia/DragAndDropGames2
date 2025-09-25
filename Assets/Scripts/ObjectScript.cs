@@ -1,12 +1,16 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectScript : MonoBehaviour
 {
     public GameObject[] vehicles;
+    public Transform[] spawnPoints;
+    public Transform[] dropPoints;
     [HideInInspector]
     public Vector2[] startCoordinates;
+    [HideInInspector]
+    public Transform[] assignedDropPoints;
     public Canvas can;
     public AudioSource effects;
     public AudioClip[] audioCli;
@@ -19,12 +23,45 @@ public class ObjectScript : MonoBehaviour
     void Awake()
     {
         startCoordinates = new Vector2[vehicles.Length];
-        Debug.Log(vehicles.Length);
-        Debug.Log(startCoordinates.Length);
+        assignedDropPoints = new Transform[vehicles.Length];
+
+        // Рандомим стартовые точки
+        Transform[] availableSpawn = (Transform[])spawnPoints.Clone();
         for (int i = 0; i < vehicles.Length; i++)
         {
-            startCoordinates[i] = vehicles[i].GetComponent<RectTransform>().localPosition;
-            Debug.Log(vehicles[i].GetComponent<RectTransform>().localPosition);
+            int randomIndex = Random.Range(0, availableSpawn.Length);
+            Transform point = availableSpawn[randomIndex];
+
+            vehicles[i].GetComponent<RectTransform>().localPosition = point.localPosition;
+            startCoordinates[i] = point.localPosition;
+
+            availableSpawn = RemoveAt(availableSpawn, randomIndex);
         }
+
+        // Рандомим dropPlaces
+        assignedDropPoints = ShuffleArray(dropPoints);
     }
+
+    private Transform[] RemoveAt(Transform[] array, int index)
+    {
+        Transform[] newArray = new Transform[array.Length - 1];
+        for (int i = 0, j = 0; i < array.Length; i++)
+        {
+            if (i == index) continue;
+            newArray[j++] = array[i];
+        }
+        return newArray;
+    }
+
+    private Transform[] ShuffleArray(Transform[] array)
+    {
+        Transform[] newArray = (Transform[])array.Clone();
+        for (int i = 0; i < newArray.Length; i++)
+        {
+            int rnd = Random.Range(i, newArray.Length);
+            (newArray[i], newArray[rnd]) = (newArray[rnd], newArray[i]);
+        }
+        return newArray;
+    }
+
 }

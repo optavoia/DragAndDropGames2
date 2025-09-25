@@ -10,6 +10,10 @@ TagManager:
   - Buss
   - b2
   - cement
+  - eskavator
+  - policija
+  - Tracktor
+  - masina
   layers:
   - Default
   - TransparentFX
