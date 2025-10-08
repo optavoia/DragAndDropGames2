@@ -14,6 +14,7 @@ TagManager:
   - policija
   - Tracktor
   - masina
+  - bomb
   layers:
   - Default
   - TransparentFX
