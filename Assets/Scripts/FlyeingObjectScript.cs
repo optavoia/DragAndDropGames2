@@ -85,7 +85,7 @@ public class FlyeingObjectScript : MonoBehaviour
     public void TriggerExplosion()
     {
         isExploading = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[11], 5f);
+        objectScript.effects.PlayOneShot(objectScript.audioCli[12], 5f);
 
         if (TryGetComponent<Animator>(out Animator animator))
         {
@@ -141,7 +141,7 @@ public class FlyeingObjectScript : MonoBehaviour
             image.color = Color.cyan;
             StartCoroutine(RecoverColor(0.5f));
 
-            objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
+            objectScript.effects.PlayOneShot(objectScript.audioCli[11]);
 
             StartCoroutine(Vibrate());
         }

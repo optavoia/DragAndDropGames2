@@ -2260,7 +2260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1008717437
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2835,7 +2835,7 @@ RectTransform:
   m_GameObject: {fileID: 1137538114}
   m_LocalRotation: {x: 0, y: 0, z: -0.13087231, w: 0.9913992}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1086768096}
@@ -3400,8 +3400,8 @@ MonoBehaviour:
   - {fileID: 5799703115478174242, guid: 26c48559d0ee7bd42aa4a0d1a8f715a8, type: 3}
   - {fileID: 2158880727138169870, guid: c417b7efcf66ba142846416aba4775ef, type: 3}
   spawnPoint: {fileID: 1354127495}
-  cloudSpawnInterval: 5
-  objectSpawnInterval: 5
+  cloudSpawnInterval: 2
+  objectSpawnInterval: 2
   cloudMinSpeed: 50
   cloudMaxSpeed: 100
   objectMinSpeed: 50
@@ -4049,7 +4049,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5661985900657282435, guid: 9773665b06805cf45ab967f722551bac, type: 3}
+  m_Sprite: {fileID: -4828884211225491971, guid: 8e2127e4ee0d97443ae1a3d7a17c36fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
