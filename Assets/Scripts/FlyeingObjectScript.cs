@@ -144,6 +144,7 @@ public class FlyeingObjectScript : MonoBehaviour
             objectScript.effects.PlayOneShot(objectScript.audioCli[11]);
 
             StartCoroutine(Vibrate());
+            GameManager.Instance.CarEaten();
         }
     }
 

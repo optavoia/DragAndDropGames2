@@ -42,6 +42,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                         GetComponent<RectTransform>().localRotation;
                     eventData.pointerDrag.GetComponent<RectTransform>().localScale =
                         GetComponent<RectTransform>().localScale ;
+                    GameManager.Instance.CarPlaced();
 
                     switch (eventData.pointerDrag.tag)
                     {
