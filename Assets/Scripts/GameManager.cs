@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Panels")]
     public GameObject winPanel;
     public GameObject losePanel;
+    public GameObject blockerPanel;
 
     [Header("UI Texts")]
     public TMP_Text gameTimerText;     // основной таймер на экране во время игры
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text loseTimerText;     // таймер на панели поражения
     public TMP_Text winScoreText;      // оценка на панели победы
     public TMP_Text loseScoreText;     // оценка на панели поражения
+
 
     void Awake()
     {
@@ -72,6 +74,8 @@ public class GameManager : MonoBehaviour
     {
         gameActive = false;
         winPanel.SetActive(true);
+        blockerPanel.SetActive(true);  // Блокируем клики сзади
+
         int hours = (int)(timer / 3600);
         int minutes = (int)((timer % 3600) / 60);
         int seconds = (int)(timer % 60);
@@ -88,6 +92,8 @@ public class GameManager : MonoBehaviour
     {
         gameActive = false;
         losePanel.SetActive(true);
+        blockerPanel.SetActive(true);  // Блокируем клики сзади
+
         int hours = (int)(timer / 3600);
         int minutes = (int)((timer % 3600) / 60);
         int seconds = (int)(timer % 60);
@@ -97,7 +103,7 @@ public class GameManager : MonoBehaviour
         if (loseTimerText != null)
             loseTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
 
-        loseScoreText.text = $"Novērtējums: {CalculateScore()}/3";
+        loseScoreText.text = $"{CalculateScore()}/3";
     }
 
     private int CalculateScore()
