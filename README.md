@@ -17,4 +17,4 @@ Drag and drop game - unity 2d drag and drop games for children +6
 - [x] Add flying obstacles with destroy effects.
 
 ## Starter screen
-![Screenshot of a started screen](https://imgur.com/JtIrURt)
+![Screenshot of a started screen]([https://imgur.com/JtIrURt](https://github.com/optavoia/DragAndDropGames2/blob/0667a38d6c74848812c655532487a1b7ea4333fe/Assets/Resources/Images/starter%20screen.jpg))
