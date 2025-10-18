@@ -18,6 +18,7 @@ public class ObjectScript : MonoBehaviour
     public bool rightPlace = false;
     public static GameObject lastDragged = null;
     public static bool drag = false;
+    public bool locked = false;
 
 
     void Awake()
@@ -32,8 +33,19 @@ public class ObjectScript : MonoBehaviour
             int randomIndex = Random.Range(0, availableSpawn.Length);
             Transform point = availableSpawn[randomIndex];
 
-            vehicles[i].GetComponent<RectTransform>().localPosition = point.localPosition;
+            RectTransform rect = vehicles[i].GetComponent<RectTransform>();
+            rect.localPosition = point.localPosition;
             startCoordinates[i] = point.localPosition;
+
+            // Если индекс от 10 до 19, рандомим масштаб и поворот
+            if (i >= 10 && i <= 19)
+            {
+                float randomScale = Random.Range(0.6f, 1f);
+                rect.localScale = new Vector3(randomScale, randomScale, 1f);
+
+                float randomRotation = Random.Range(0f, 90f);
+                rect.localRotation = Quaternion.Euler(0f, 0f, randomRotation);
+            }
 
             availableSpawn = RemoveAt(availableSpawn, randomIndex);
         }
@@ -41,6 +53,9 @@ public class ObjectScript : MonoBehaviour
         // Рандомим dropPlaces
         assignedDropPoints = ShuffleArray(dropPoints);
     }
+
+
+
 
     private Transform[] RemoveAt(Transform[] array, int index)
     {

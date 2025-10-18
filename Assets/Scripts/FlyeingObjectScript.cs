@@ -38,6 +38,9 @@ public class FlyeingObjectScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.gameActive)
+            return;
+
         float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
         rectTransform.anchoredPosition += new Vector2(-speed * Time.deltaTime, waveOffset * Time.deltaTime);
         // <-
@@ -69,10 +72,16 @@ public class FlyeingObjectScript : MonoBehaviour
         if (ObjectScript.drag && !isFadingOut &&
             RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
         {
-            Debug.Log("The cursor collided with a flying object!");
-
             if (ObjectScript.lastDragged != null)
             {
+                DraggableItem draggable = ObjectScript.lastDragged.GetComponent<DraggableItem>();
+                if (draggable != null && draggable.locked)
+                {
+                    // если машина уже на правильном месте, летающий объект её не трогает
+                    return;
+                }
+
+                // если не заблокирована — уничтожаем
                 StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
@@ -80,6 +89,7 @@ public class FlyeingObjectScript : MonoBehaviour
 
             StartToDestroy();
         }
+
     }
 
     public void TriggerExplosion()

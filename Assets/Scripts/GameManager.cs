@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour
     public TMP_Text winScoreText;      // оценка на панели победы
     public TMP_Text loseScoreText;     // оценка на панели поражения
 
+    [Header("Audio")]
+    public AudioSource audioSource;  // AudioSource на объекте GameManager
+    public AudioClip winSound;       // mp3/ogg файл победы
+    public AudioClip loseSound;      // mp3/ogg файл поражения
+
 
     void Awake()
     {
@@ -81,11 +86,15 @@ public class GameManager : MonoBehaviour
         int seconds = (int)(timer % 60);
 
         if (gameTimerText != null)
-            gameTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00} (stop)";
+            gameTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
         if (winTimerText != null)
             winTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
 
         winScoreText.text = $"Novērtējums: {CalculateScore()}/3";
+
+        // проигрываем звук победы
+        if (audioSource != null && winSound != null)
+            audioSource.PlayOneShot(winSound);
     }
 
     private void Lose()
@@ -99,11 +108,15 @@ public class GameManager : MonoBehaviour
         int seconds = (int)(timer % 60);
 
         if (gameTimerText != null)
-            gameTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00} (stop)";
+            gameTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
         if (loseTimerText != null)
             loseTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
 
         loseScoreText.text = $"{CalculateScore()}/3";
+
+        // проигрываем звук поражения
+        if (audioSource != null && loseSound != null)
+            audioSource.PlayOneShot(loseSound);
     }
 
     private int CalculateScore()
