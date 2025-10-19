@@ -29,11 +29,11 @@ The victory panel displays:
 - Rating from 1-3 (depending on the speed of completion and the number of cars placed right),
 - Timer,
 - Buttons to restart gamne and back to menu.
-![[https://imgur.com/JtIrURt](https://github.com/optavoia/DragAndDropGames2/blob/4a38126165d4b657d40f5149b3a919c507b2a03a/Assets/Resources/Images/win%20panel.jpg)
-
+![https://github.com/optavoia/DragAndDropGames2/blob/0f7db97e41432c62e4fd84e2a6e2c929e90e9194/Assets/Resources/Images/win%20panel.jpg](
+https://github.com/optavoia/DragAndDropGames2/blob/0f7db97e41432c62e4fd84e2a6e2c929e90e9194/Assets/Resources/Images/win%20panel.jpg)
 ## Lose panel
 The lose panel displays:
 - Rating from 1-3 (depending on the speed of completion and the number of cars placed right),
 - Timer,
 - Buttons to restart gamne and back to menu.
-![[https://imgur.com/JtIrURt](https://github.com/optavoia/DragAndDropGames2/blob/4a38126165d4b657d40f5149b3a919c507b2a03a/Assets/Resources/Images/lose%20%20panel.jpg)
+![https://github.com/optavoia/DragAndDropGames2/blob/0667a38d6c74848812c655532487a1b7ea4333fe/Assets/Resources/Images/starter%20screen.jpg](https://github.com/optavoia/DragAndDropGames2/blob/4a38126165d4b657d40f5149b3a919c507b2a03a/Assets/Resources/Images/lose%20%20panel.jpg)
