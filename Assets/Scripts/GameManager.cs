@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
         if (winTimerText != null)
             winTimerText.text = $"{hours:00}:{minutes:00}:{seconds:00}";
 
-        winScoreText.text = $"Novērtējums: {CalculateScore()}/3";
+        winScoreText.text = $"{CalculateScore()}/3";
 
         // проигрываем звук победы
         if (audioSource != null && winSound != null)
@@ -123,17 +123,19 @@ public class GameManager : MonoBehaviour
     {
         // Расчёт оценки в зависимости от количества поставленных машин и скорости
         float efficiency = (float)placedCars / totalCars;
-        int scoreValue = 1;
+        int scoreValue = 0;
 
-        if (efficiency >= 0.66f)
+        if (efficiency >= 0.80f)
             scoreValue = 3;
-        else if (efficiency >= 0.33f)
+        else if (efficiency >= 0.50f)
             scoreValue = 2;
+        else if (efficiency >= 0.20f)
+            scoreValue = 1;
 
         // Можно добавить бонус за быстрое прохождение
         if (timer < 60f && scoreValue > 1)
             scoreValue = Mathf.Min(3, scoreValue + 1);
 
-        return Mathf.Clamp(scoreValue, 1, 3);
+        return Mathf.Clamp(scoreValue, 0, 3);
     }
 }

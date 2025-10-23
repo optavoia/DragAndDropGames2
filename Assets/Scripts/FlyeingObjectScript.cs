@@ -57,20 +57,43 @@ public class FlyeingObjectScript : MonoBehaviour
             isFadingOut = true;
         }
 
+        Vector2 inputPosition;
+        if (!TryGetInputPosition(out inputPosition))
+            return;
+        ///////////////////////////
         if (CompareTag("bomb") && !isExploading &&
             RectTransformUtility.RectangleContainsScreenPoint(
-                rectTransform, Input.mousePosition, Camera.main))
+                rectTransform, inputPosition, Camera.main))
         {
             Debug.Log("The cursor collided with a bomb! (without car)");
             TriggerExplosion();
 
         }
 
+        bool TryGetInputPosition(out Vector2 position)
+        {
+            #if UNITY_EDITOR || UNITY_STANDALONE
+                position = Input.mousePosition;
+                return true;
+            #elif UNITY_ANDROID
+                if(Input.touchCount > 0)
+                {
+                    position = Input.GetTouch(0).position;
+                    return true;
+                }
+                else
+                {
+                    position = Vector2.zero;
+                    return false;
+                }
+            #endif
+        }
+
         // Caurskatīt no šejienes
 
 
         if (ObjectScript.drag && !isFadingOut &&
-            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
+            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, inputPosition, Camera.main))
         {
             if (ObjectScript.lastDragged != null)
             {
@@ -160,6 +183,11 @@ public class FlyeingObjectScript : MonoBehaviour
 
     IEnumerator Vibrate()
     {
+
+        #if UNITY_ANDROID
+            Handheld.Vibrate();
+        #endif
+
         Vector2 originalPosition = rectTransform.anchoredPosition;
         float duration = 0.3f;
         float elpased = 0f;

@@ -8,10 +8,25 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
     private float xSizeDiff, ySizeDiff;
     public ObjectScript objScript;
 
+    void Start()
+    {
+        if(objScript == null)
+        {
+            objScript = Object.FindFirstObjectByType<ObjectScript>();
+        }
+
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void OnDrop(PointerEventData eventData)
     {
+        if (eventData.pointerDrag == null)
+            return;
+
+        if (eventData.pointerDrag.tag.Equals(tag))
+        {
+            placeZRot = eventData.pointerDrag.GetComponent<RectTransform>().transform.eulerAngles.z;
+        }
         if((eventData.pointerDrag != null) && 
             Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
