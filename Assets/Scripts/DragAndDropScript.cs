@@ -2,112 +2,133 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
-public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
+// CHANGES FOR ANDROID
+public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
     IDragHandler, IEndDragHandler
 {
     private CanvasGroup canvasGro;
     private RectTransform rectTra;
     public ObjectScript objectScr;
     public ScreenBoundriesScript screenBou;
-    private DraggableItem draggableItem; // ссылка на скрипт с locked
+
+    private Vector3 dragOffsetWorld;
+    private Camera uiCamera;
+    private Canvas canvas;
 
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         canvasGro = GetComponent<CanvasGroup>();
         rectTra = GetComponent<RectTransform>();
-        draggableItem = GetComponent<DraggableItem>(); // получаем компонент DraggableItem
+
+        if (objectScr == null)
+        {
+            objectScr = Object.FindFirstObjectByType<ObjectScript>();
+        }
+
+        if (screenBou == null)
+        {
+            screenBou = Object.FindFirstObjectByType<ScreenBoundriesScript>();
+        }
+
+        canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            uiCamera = canvas.worldCamera;
+
+        }
+        else
+        {
+            Debug.LogError("Canvas not found for DragAndDropScript");
+        }
     }
 
+
+
+    // CHANGES FOR ANDROID
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (draggableItem != null && draggableItem.locked)
-            return; // если объект заблокирован, игнорируем клик
+        Debug.Log("OnPointerDown");
+        objectScr.effects.PlayOneShot(objectScr.audioCli[0]);
 
-        if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
-        {
-            Debug.Log("OnPointerDown");
-            objectScr.effects.PlayOneShot(objectScr.audioCli[0]);
-        } 
     }
 
+    // CHANGES FOR ANDROID
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (draggableItem != null && draggableItem.locked)
-            return; // нельзя начинать перетаскивание
-        if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
+        ObjectScript.drag = true;
+        ObjectScript.lastDragged = eventData.pointerDrag;
+        canvasGro.blocksRaycasts = false;
+        canvasGro.alpha = 0.6f;
+        //rectTra.SetAsLastSibling();
+        int lastIndex = transform.parent.childCount - 1;
+        int position = Mathf.Max(0, lastIndex - 1);
+        transform.SetSiblingIndex(position);
+
+        Vector3 pointerWorld;
+
+        if (ScreenPointToWorld(eventData.position, out pointerWorld))
         {
-            ObjectScript.drag = true;
-            ObjectScript.lastDragged = eventData.pointerDrag;
-            canvasGro.blocksRaycasts = false;
-            canvasGro.alpha = 0.6f;
-            //rectTra.SetAsLastSibling();
-            // Находим индекс BlockerPanel, чтобы не подниматься выше неё
-            Transform blocker = transform.parent.Find("BlockerPanel");
-            if (blocker != null)
-            {
-                int blockerIndex = blocker.GetSiblingIndex();
-                transform.SetSiblingIndex(Mathf.Max(0, blockerIndex - 1));
-            }
-            else
-            {
-                transform.SetAsLastSibling(); // fallback, если панель не найдена
-            }
-            Vector3 cursorWorldPos = Camera.main.ScreenToWorldPoint(
-               new Vector3 (Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z));
-            rectTra.position = cursorWorldPos;
+            dragOffsetWorld = transform.position - pointerWorld;
 
-            screenBou.screenPoint = Camera.main.WorldToScreenPoint(rectTra.localPosition);
-
-            screenBou.offset = rectTra.localPosition - 
-                Camera.main.ScreenToWorldPoint(
-                    new Vector3(Input.mousePosition.x, Input.mousePosition.y, 
-                screenBou.screenPoint.z));
         }
+        else
+        {
+            dragOffsetWorld = Vector3.zero;
+        }
+
+        ObjectScript.lastDragged = eventData.pointerDrag;
     }
 
+
+    // CHANGES FOR ANDROID
     public void OnDrag(PointerEventData eventData)
     {
-        if (draggableItem != null && draggableItem.locked)
-            return; // игнорируем движение
-        if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
-        {
-            Vector3 curSreenPoint = 
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z);
-            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curSreenPoint) + screenBou.offset;
-            rectTra.position = screenBou.GetClampedPosition(curPosition);
-        }
+        Vector3 pointerWorld;
+
+        if (!ScreenPointToWorld(eventData.position, out pointerWorld))
+            return;
+
+        Vector3 desiredPosition = pointerWorld + dragOffsetWorld;
+        desiredPosition.z = transform.position.z;
+
+        screenBou.RecalculateBounds();
+
+        Vector2 clamped = screenBou.GetClampedPosition(desiredPosition);
+        transform.position = new Vector3(clamped.x, clamped.y, desiredPosition.z);
     }
 
+    // CHANGES FOR ANDROID
     public void OnEndDrag(PointerEventData eventData)
     {
-        canvasGro.alpha = 1f;
-        if (draggableItem != null && draggableItem.locked)
-            return; // игнорируем отпускание
+        objectScr.effects.PlayOneShot(objectScr.audioCli[0]);
+        ObjectScript.drag = false;
+        canvasGro.blocksRaycasts = true;
+        canvasGro.alpha = 1.0f;
 
-        if (Input.GetMouseButtonUp(0))
+        if (objectScr.rightPlace)
         {
-            ObjectScript.drag = false;
-            canvasGro.blocksRaycasts = true;
-            canvasGro.alpha = 1f;
-
-            if(objectScr.rightPlace)
-            {
-                
-                ObjectScript.lastDragged = null;
-                canvasGro.blocksRaycasts = true; // включаем блокировку кликов, чтобы его не трогали
-
-                // 🔒 блокируем объект, если он встал на правильное место
-                if (draggableItem != null)
-                    draggableItem.locked = true;
-
-
-            }
-            
-            objectScr.rightPlace = false;
+            canvasGro.blocksRaycasts = false;
+            ObjectScript.lastDragged = null;
         }
+
+        objectScr.rightPlace = false;
+    }
+
+    private bool ScreenPointToWorld(Vector2 screenPoint, out Vector3 worldPoint)
+    {
+        worldPoint = Vector3.zero;
+
+        if (uiCamera == null)
+        {
+            return false;
+        }
+
+        float z = Mathf.Abs(uiCamera.transform.position.z - transform.position.z);
+        Vector3 sp = new Vector3(screenPoint.x, screenPoint.y, z);
+        worldPoint = uiCamera.ScreenToWorldPoint(sp);
+
+        return true;
     }
 }

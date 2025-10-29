@@ -6,17 +6,17 @@ public class FlyeingObjectScript : MonoBehaviour
 {
     [HideInInspector]
     public float speed = 1f;
-    public float fadeDuration = 1.5f;
     public float waveAmplitude = 25f;
     public float waveFrequency = 1f;
+    public float fadeDuration = 1.5f;
     private ObjectScript objectScript;
-    private ScreenBoundriesScript scrreenBoundriesScript;
+    private ScreenBoundriesScript screenBoundriesScript;
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private bool isFadingOut = false;
-    private bool isExploading = false;
+    private bool isExploding = false;
     private Image image;
-    private Color originalColor;
+    private Color orginalColor;
 
     void Start()
     {
@@ -29,96 +29,92 @@ public class FlyeingObjectScript : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
 
         image = GetComponent<Image>();
-        originalColor = image.color;
-        objectScript = FindFirstObjectByType<ObjectScript>();
-        scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
+        orginalColor = image.color;
+
+        objectScript = Object.FindFirstObjectByType<ObjectScript>();
+        screenBoundriesScript = Object.FindFirstObjectByType<ScreenBoundriesScript>();
         StartCoroutine(FadeIn());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.gameActive)
-            return;
-
         float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
         rectTransform.anchoredPosition += new Vector2(-speed * Time.deltaTime, waveOffset * Time.deltaTime);
-        // <-
-        if (speed > 0 && transform.position.x < (scrreenBoundriesScript.minX + 80) && !isFadingOut)
+
+        // Iznīcinās ja lido pa kreisi
+        if (speed > 0 && transform.position.x < (screenBoundriesScript.minX + 80) && !isFadingOut)
         {
-            StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
+            StartCoroutine(FadeOutAndDestroy());
         }
 
-        // ->
-        if (speed < 0 && transform.position.x > (scrreenBoundriesScript.maxX - 80) && !isFadingOut)
+        // Iznīcinās ja lido pa labi
+        if (speed < 0 && transform.position.x > (screenBoundriesScript.maxX - 80) && !isFadingOut)
         {
-            StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
+            StartCoroutine(FadeOutAndDestroy());
         }
 
+        // Ja neko nevelk un kursors pieskaras bumbai
         Vector2 inputPosition;
         if (!TryGetInputPosition(out inputPosition))
             return;
-        ///////////////////////////
-        if (CompareTag("bomb") && !isExploading &&
+
+
+        if (CompareTag("bomb") && !isExploding &&
             RectTransformUtility.RectangleContainsScreenPoint(
                 rectTransform, inputPosition, Camera.main))
         {
-            Debug.Log("The cursor collided with a bomb! (without car)");
+            Debug.Log("Bomb hit by cursor (without dragging)");
             TriggerExplosion();
-
         }
-
-        bool TryGetInputPosition(out Vector2 position)
-        {
-            #if UNITY_EDITOR || UNITY_STANDALONE
-                position = Input.mousePosition;
-                return true;
-            #elif UNITY_ANDROID
-                if(Input.touchCount > 0)
-                {
-                    position = Input.GetTouch(0).position;
-                    return true;
-                }
-                else
-                {
-                    position = Vector2.zero;
-                    return false;
-                }
-            #endif
-        }
-
-        // Caurskatīt no šejienes
 
 
         if (ObjectScript.drag && !isFadingOut &&
-            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, inputPosition, Camera.main))
+            RectTransformUtility.RectangleContainsScreenPoint(
+                rectTransform, inputPosition, Camera.main))
         {
+            Debug.Log("Obstacle hit by drag");
             if (ObjectScript.lastDragged != null)
             {
-                DraggableItem draggable = ObjectScript.lastDragged.GetComponent<DraggableItem>();
-                if (draggable != null && draggable.locked)
-                {
-                    // если машина уже на правильном месте, летающий объект её не трогает
-                    return;
-                }
-
-                // если не заблокирована — уничтожаем
                 StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
             }
 
-            StartToDestroy();
-        }
+            if (CompareTag("bomb"))
+                StartToDestroy(Color.red);
 
+            else
+                StartToDestroy(Color.cyan);
+        }
+    }
+
+    bool TryGetInputPosition(out Vector2 position)
+    {
+#if UNITY_EDITOR || UNITY_STANDALONE
+        position = Input.mousePosition;
+        return true;
+
+#elif UNITY_ANDROID
+            if(Input.touchCount > 0)
+            {
+                position = Input.GetTouch(0).position;
+                return true;
+            }
+            else
+            {
+                position = Vector2.zero;
+                return false;
+            }
+#endif
     }
 
     public void TriggerExplosion()
     {
-        isExploading = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[12], 5f);
+        isExploding = true;
+        objectScript.effects.PlayOneShot(objectScript.audioCli[6], 5f);
 
         if (TryGetComponent<Animator>(out Animator animator))
         {
@@ -127,106 +123,82 @@ public class FlyeingObjectScript : MonoBehaviour
 
         image.color = Color.red;
         StartCoroutine(RecoverColor(0.4f));
-
         StartCoroutine(Vibrate());
-        StartCoroutine(WaitBeforeExpload());
+        StartCoroutine(WaitBeforeExplode());
+
     }
 
-    IEnumerator WaitBeforeExpload()
+    IEnumerator WaitBeforeExplode()
     {
-        float radius = 0f;
+        float radius = 0;
         if (TryGetComponent<CircleCollider2D>(out CircleCollider2D circleCollider))
         {
             radius = circleCollider.radius * transform.lossyScale.x;
+            ExploadAndDestroyNearbyObjects(radius);
+            yield return new WaitForSeconds(1f);
+            ExploadAndDestroyNearbyObjects(radius);
+            Destroy(gameObject);
         }
-        ExploadAndDestroy(radius);
-        yield return new WaitForSeconds(1f);
-        ExploadAndDestroy(radius);
-        Destroy(gameObject);
     }
 
-    void ExploadAndDestroy(float radius)
+    void ExploadAndDestroyNearbyObjects(float radius)
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, radius);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
 
-        foreach (var hitCollider in hitColliders)
+        foreach (Collider2D hit in hits)
         {
-            if (hitCollider != null && hitCollider.gameObject != gameObject)
+            if (hit != null && hit.gameObject != gameObject)
             {
-                FlyeingObjectScript obj =
-                    hitCollider.gameObject.GetComponent<FlyeingObjectScript>();
-
-                if (obj != null && !obj.isExploading)
+                FlyeingObjectScript obj = hit.GetComponent<FlyeingObjectScript>();
+                if (obj != null && !obj.isExploding)
                 {
-                    obj.StartToDestroy();
+                    obj.StartToDestroy(Color.cyan);
                 }
             }
         }
     }
 
-    public void StartToDestroy()
+    public void StartToDestroy(Color c)
     {
         if (!isFadingOut)
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
 
-            image.color = Color.cyan;
+            image.color = c;
             StartCoroutine(RecoverColor(0.5f));
 
-            objectScript.effects.PlayOneShot(objectScript.audioCli[11]);
-
             StartCoroutine(Vibrate());
-            GameManager.Instance.CarEaten();
+            objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
         }
-    }
-
-    IEnumerator Vibrate()
-    {
-
-        #if UNITY_ANDROID
-            Handheld.Vibrate();
-        #endif
-
-        Vector2 originalPosition = rectTransform.anchoredPosition;
-        float duration = 0.3f;
-        float elpased = 0f;
-        float intensity = 5f;
-
-        while (elpased < duration)
-        {
-            rectTransform.anchoredPosition =
-                originalPosition + Random.insideUnitCircle * intensity;
-            elpased += Time.deltaTime;
-            yield return null;
-        }
-        rectTransform.anchoredPosition = originalPosition;
     }
 
     IEnumerator FadeIn()
     {
-        float t = 0f;
-        while (t < fadeDuration)
+        float a = 0f;
+        while (a < fadeDuration)
         {
-            t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeDuration);
+            a += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(0f, 1f, a / fadeDuration);
             yield return null;
         }
+
         canvasGroup.alpha = 1f;
     }
 
     IEnumerator FadeOutAndDestroy()
     {
-        float t = 0f;
+        float a = 0f;
         float startAlpha = canvasGroup.alpha;
 
-        while (t < fadeDuration)
+        while (a < fadeDuration)
         {
-            t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, t / fadeDuration);
+            a += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0, a / fadeDuration);
             yield return null;
         }
-        canvasGroup.alpha = 0f;
+
+        canvasGroup.alpha = 0;
         Destroy(gameObject);
     }
 
@@ -240,17 +212,39 @@ public class FlyeingObjectScript : MonoBehaviour
         {
             t += Time.deltaTime;
             target.transform.localScale = Vector3.Lerp(orginalScale, Vector3.zero, t / duration);
-            float angle = Mathf.Lerp(0f, 360f, t / duration);
-            target.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            float angle = Mathf.Lerp(0, 360, t / duration);
+            target.transform.rotation = Quaternion.Euler(0, 0, angle);
 
             yield return null;
         }
+        // Ko darīt ar māšinu tālāk?
+        // Nav obligāti jāiznīcina, varbūt jāatgriež sākuma pozīcijā?
         Destroy(target);
     }
 
     IEnumerator RecoverColor(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        image.color = originalColor;
+        image.color = orginalColor;
+    }
+
+    IEnumerator Vibrate()
+    {
+#if UNITY_ANDROID
+        Handheld.Vibrate();
+#endif
+
+        Vector2 orginalPosition = rectTransform.anchoredPosition;
+        float duration = 0.3f;
+        float elpased = 0f;
+        float intensity = 5f;
+
+        while (elpased < duration)
+        {
+            rectTransform.anchoredPosition = orginalPosition + Random.insideUnitCircle * intensity;
+            elpased += Time.deltaTime;
+            yield return null;
+        }
+
     }
 }
