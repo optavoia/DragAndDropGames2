@@ -114,7 +114,7 @@ public class FlyeingObjectScript : MonoBehaviour
     public void TriggerExplosion()
     {
         isExploding = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[6], 5f);
+        objectScript.effects.PlayOneShot(objectScript.audioCli[12], 5f);
 
         if (TryGetComponent<Animator>(out Animator animator))
         {

@@ -10,152 +10,101 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
 
     void Start()
     {
-        if(objScript == null)
+        if (objScript == null)
         {
             objScript = Object.FindFirstObjectByType<ObjectScript>();
         }
-
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Этот метод вызывается при отпускании перетаскиваемого объекта над зоной Drop
     public void OnDrop(PointerEventData eventData)
     {
         if (eventData.pointerDrag == null)
             return;
 
+        // ✅ Универсальная проверка "отпускания" для ПК и Android
+        bool released = false;
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+        // ПК / Editor
+        released = Input.GetMouseButtonUp(0);
+#elif UNITY_ANDROID || UNITY_IOS
+        // Мобильные устройства
+        released = Input.touchCount == 0;
+#endif
+
+        if (!released)
+            return;
+
+        // Проверка совпадения по тегу (объект и место должны совпадать)
         if (eventData.pointerDrag.tag.Equals(tag))
         {
+            // Проверяем поворот
             placeZRot = eventData.pointerDrag.GetComponent<RectTransform>().transform.eulerAngles.z;
-        }
-        if((eventData.pointerDrag != null) && 
-            Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
-        {
-            if(eventData.pointerDrag.tag.Equals(tag))
+            vehicleZRot = GetComponent<RectTransform>().transform.eulerAngles.z;
+            rotDiff = Mathf.Abs(placeZRot - vehicleZRot);
+            Debug.Log("Rotation difference: " + rotDiff);
+
+            // Проверяем размер
+            placeSiz = eventData.pointerDrag.GetComponent<RectTransform>().localScale;
+            vehicleSiz = GetComponent<RectTransform>().localScale;
+            xSizeDiff = Mathf.Abs(placeSiz.x - vehicleSiz.x);
+            ySizeDiff = Mathf.Abs(placeSiz.y - vehicleSiz.y);
+            Debug.Log("X size difference: " + xSizeDiff);
+            Debug.Log("Y size difference: " + ySizeDiff);
+
+            // Если объект подходит по размеру и вращению
+            if ((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
+                (xSizeDiff <= 0.05 && ySizeDiff <= 0.05))
             {
-               placeZRot = 
-                    eventData.pointerDrag.GetComponent<RectTransform>().transform.eulerAngles.z;
-                
-                vehicleZRot = 
-                    GetComponent<RectTransform>().transform.eulerAngles.z;
+                Debug.Log("Correct place");
 
-                rotDiff = Mathf.Abs(placeZRot - vehicleZRot);
-                Debug.Log("Rotation difference: " + rotDiff);
+                // Совмещаем объект с местом
+                var rect = eventData.pointerDrag.GetComponent<RectTransform>();
+                var targetRect = GetComponent<RectTransform>();
+                rect.localPosition = targetRect.localPosition;
+                rect.localRotation = targetRect.localRotation;
+                rect.localScale = targetRect.localScale;
 
-                placeSiz = eventData.pointerDrag.GetComponent<RectTransform>().localScale;
-                vehicleSiz = GetComponent<RectTransform>().localScale;
-                xSizeDiff = Mathf.Abs(placeSiz.x - vehicleSiz.x);
-                ySizeDiff = Mathf.Abs(placeSiz.y - vehicleSiz.y);
-                Debug.Log("X size difference: " + xSizeDiff);
-                Debug.Log("Y size difference: " + ySizeDiff);
+                // 🔒 Блокируем объект, чтобы его нельзя было снова переместить
+                var draggable = eventData.pointerDrag.GetComponent<DraggableItem>();
+                if (draggable != null)
+                    draggable.locked = true;
 
-                if((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
-                    (xSizeDiff <= 0.05 && ySizeDiff <= 0.05)) {
-                    Debug.Log("Correct place");
+                // Сообщаем менеджеру, что объект успешно размещён
+                GameManager.Instance.CarPlaced();
 
-                    eventData.pointerDrag.GetComponent<RectTransform>().localPosition =
-                        GetComponent<RectTransform>().localPosition;
-                    eventData.pointerDrag.GetComponent<RectTransform>().localRotation =
-                        GetComponent<RectTransform>().localRotation;
-                    eventData.pointerDrag.GetComponent<RectTransform>().localScale =
-                        GetComponent<RectTransform>().localScale ;
-
-                    // 🔒 Блокируем объект, чтобы его больше нельзя было двигать
-                    var draggable = eventData.pointerDrag.GetComponent<DraggableItem>();
-                    if (draggable != null)
-                        draggable.locked = true;
-
-                    GameManager.Instance.CarPlaced();
-
-                    switch (eventData.pointerDrag.tag)
-                    {
-                        case "Garbage":
-                            objScript.effects.PlayOneShot(objScript.audioCli[1]);
-                            break;
-                        case "Medicine":
-                            objScript.effects.PlayOneShot(objScript.audioCli[2]);
-                            break;
-                        case "Fire":
-                            objScript.effects.PlayOneShot(objScript.audioCli[3]);
-                            break;
-                        case "Buss":
-                            objScript.effects.PlayOneShot(objScript.audioCli[4]);
-                            break;
-                        case "b2":
-                            objScript.effects.PlayOneShot(objScript.audioCli[5]);
-                            break;
-                        case "cement":
-                            objScript.effects.PlayOneShot(objScript.audioCli[6]);
-                            break;
-                        case "eskavator":
-                            objScript.effects.PlayOneShot(objScript.audioCli[7]);
-                            break;
-                        case "policija":
-                            objScript.effects.PlayOneShot(objScript.audioCli[8]);
-                            break;
-                        case "Tracktor":
-                            objScript.effects.PlayOneShot(objScript.audioCli[9]);
-                            break;
-                        case "masina":
-                            objScript.effects.PlayOneShot(objScript.audioCli[10]);
-                            break;
-                        default:
-                            Debug.Log("UNknown tag detekted");
-                            break;
-                    }
-                }
-
-            } else
-            {
-                objScript.rightPlace = false;
-                objScript.effects.PlayOneShot(objScript.audioCli[0]);
-
-                switch(eventData.pointerDrag.tag)
+                // 🔊 Звук по тегу
+                switch (eventData.pointerDrag.tag)
                 {
-                    case "Garbage":
-                        objScript.vehicles[0].GetComponent<RectTransform>().localPosition = 
-                            objScript.startCoordinates[0];
-                        break;
+                    case "Garbage": objScript.effects.PlayOneShot(objScript.audioCli[1]); break;
+                    case "Medicine": objScript.effects.PlayOneShot(objScript.audioCli[2]); break;
+                    case "Fire": objScript.effects.PlayOneShot(objScript.audioCli[3]); break;
+                    case "Buss": objScript.effects.PlayOneShot(objScript.audioCli[4]); break;
+                    case "b2": objScript.effects.PlayOneShot(objScript.audioCli[5]); break;
+                    case "cement": objScript.effects.PlayOneShot(objScript.audioCli[6]); break;
+                    case "eskavator": objScript.effects.PlayOneShot(objScript.audioCli[7]); break;
+                    case "policija": objScript.effects.PlayOneShot(objScript.audioCli[8]); break;
+                    case "Tracktor": objScript.effects.PlayOneShot(objScript.audioCli[9]); break;
+                    case "masina": objScript.effects.PlayOneShot(objScript.audioCli[10]); break;
+                    default: Debug.Log("Unknown tag detected"); break;
+                }
+            }
+        }
+        else
+        {
+            // ❌ Объект помещён не в то место
+            objScript.rightPlace = false;
+            objScript.effects.PlayOneShot(objScript.audioCli[0]);
 
-                    case "Medicine":
-                        objScript.vehicles[1].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[1];
-                        break;
-
-                    case "Fire":
-                        objScript.vehicles[2].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[2];
-                        break;
-                    case "Buss":
-                        objScript.vehicles[3].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[3];
-                        break;
-                    case "b2":
-                        objScript.vehicles[4].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[4];
-                        break;
-                    case "cement":
-                        objScript.vehicles[5].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[5];
-                        break;
-                    case "eskavator":
-                        objScript.vehicles[6].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[6];
-                        break;
-                    case "policija":
-                        objScript.vehicles[7].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[7];
-                        break;
-                    case "Tracktor":
-                        objScript.vehicles[8].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[8];
-                        break;
-                    case "masina":
-                        objScript.vehicles[9].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[9];
-                        break;
-                    default:
-                        Debug.Log("Unknown tag detected");
-                        break;
+            // Возвращаем объект на стартовую позицию
+            for (int i = 0; i < objScript.vehicles.Length; i++)
+            {
+                if (objScript.vehicles[i].CompareTag(eventData.pointerDrag.tag))
+                {
+                    objScript.vehicles[i].GetComponent<RectTransform>().localPosition =
+                        objScript.startCoordinates[i];
+                    break;
                 }
             }
         }

@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
+// CHANGES FOR ANDROID
 public class ScreenBoundriesScript : MonoBehaviour
 {
     [HideInInspector]
@@ -8,7 +8,7 @@ public class ScreenBoundriesScript : MonoBehaviour
     [HideInInspector]
     public float minX, maxX, minY, maxY;
 
-    public Rect worldBounds = new Rect(-960, -540, 1920, 1080);
+    public Rect worldBounds = new Rect(-668, -384, 1366, 768);
     [Range(0f, 0.5f)]
     public float padding = 0.02f;
 
@@ -23,91 +23,103 @@ public class ScreenBoundriesScript : MonoBehaviour
     float lastAspect;
     Vector3 lastCamPos;
 
-
-
-        void Awake()
+    void Awake()
+    {
+        if (targetCamera == null)
         {
-           if(targetCamera == null)
-            {
-                targetCamera = Camera.main;
-            }
+            targetCamera = Camera.main;
+        }
 
+        RecalculateBounds();
+    }
+
+    void Update()
+    {
+        if (targetCamera == null)
+        {
+            return;
+        }
+
+        bool changed = false;
+
+        if (targetCamera.orthographic)
+        {
+            if (!Mathf.Approximately(targetCamera.orthographicSize, lastOrthoSize))
+                changed = true;
+        }
+
+        if (!Mathf.Approximately(targetCamera.aspect, lastAspect))
+            changed = true;
+
+        if (targetCamera.transform.position != lastCamPos)
+            changed = true;
+
+        if (changed)
+        {
             RecalculateBounds();
         }
+    }
 
-        void Update()
-        { 
+    public void RecalculateBounds()
+    {
+        if (targetCamera == null)
+            return;
 
-            if(targetCamera == null)
-                return;
+        float wbMinX = worldBounds.xMin;
+        float wbMaxX = worldBounds.xMax;
+        float wbMinY = worldBounds.yMin;
+        float wbMaxY = worldBounds.yMax;
 
-            bool changed = false;
+        if (targetCamera.orthographic)
+        {
+            float halfH = targetCamera.orthographicSize;
+            float halfW = halfH * targetCamera.aspect;
 
-            if (targetCamera.orthographic)
+            if (halfW * 2f >= (wbMaxX - wbMinX))
             {
-                if (!Mathf.Approximately(targetCamera.orthographicSize, lastOrthoSize))
-                   changed = false;
+                minCamX = maxCamX = (wbMinX + wbMaxX) * 0.5f;
+
+            }
+            else
+            {
+                minCamX = wbMinX + halfW;
+                maxCamX = wbMaxX - halfW;
             }
 
-                    if (!Mathf.Approximately(targetCamera.aspect, lastAspect))
-                        changed = true;
 
+            if (halfH * 2f >= (wbMaxY - wbMinY))
+            {
+                minCamY = maxCamY = (wbMinY + wbMaxY) * 0.5f;
+
+            }
+            else
+            {
+                minCamY = wbMinY + halfH;
+                maxCamY = wbMaxY - halfH;
+            }
         }
 
-        public void RecalculateBounds()
-        {
-                if (targetCamera == null)
-                    return;
-                    float wbMinX = worldBounds.xMin;
-                    float wbMaxX = worldBounds.xMax;
-                    float wbMinY = worldBounds.yMin;
-                    float wbMaxY = worldBounds.yMax;
+        lastOrthoSize = targetCamera.orthographicSize;
+        lastAspect = targetCamera.aspect;
+        lastCamPos = targetCamera.transform.position;
+    }
 
-                if (targetCamera.orthographic)
-                {
-                    float halfH = targetCamera.orthographicSize;
-                    float halfW = halfH * targetCamera.aspect;
-
-                    if(halfW * 2f >= (wbMaxX - wbMinX))
-                    {
-                        minCamX = maxCamX = (wbMinX + wbMaxX) * 0.5f;
-                    }
-                    else
-                    {
-                        minCamX = wbMinX + halfW;
-                        maxCamX = wbMaxX - halfW;
-                    }
-
-                    if (halfW * 2f >= (wbMaxY - wbMinY))
-                    {
-                        minCamX = maxCamX = (wbMinY + wbMaxY) * 0.5f;
-                    }
-                    else
-                    {
-                        minCamX = wbMinY + halfH;
-                        maxCamX = wbMaxY - halfH;
-                    }
-
-            lastOrthoSize = targetCamera.orthographicSize;
-            lastAspect = targetCamera.aspect;
-            lastCamPos = targetCamera.transform.position;
-                }
-        }
-
-        public Vector2 GetClampedPosition(Vector3 curPosition)
-        {
-            float shrinkW = worldBounds.width * padding;
-            float shrinkH = worldBounds.height * padding;
-            float wbMinX = worldBounds.xMin + shrinkW;
-            float wbMaxX = worldBounds.xMax - shrinkW;
-            float wbMinY = worldBounds.yMin + shrinkH;
-            float wbMaxY = worldBounds.yMax - shrinkH;
+    // For draggable objects
+    public Vector2 GetClampedPosition(Vector3 curPosition)
+    {
+        float shrinkW = worldBounds.width * padding;
+        float shrinkH = worldBounds.height * padding;
+        float wbMinX = worldBounds.xMin + shrinkW;
+        float wbMaxX = worldBounds.xMax - shrinkW;
+        float wbMinY = worldBounds.yMin + shrinkH;
+        float wbMaxY = worldBounds.yMax - shrinkH;
 
         float cx = Mathf.Clamp(curPosition.x, wbMinX, wbMaxX);
         float cy = Mathf.Clamp(curPosition.y, wbMinY, wbMaxY);
         return new Vector2(cx, cy);
     }
 
+    // For camera movement
     public Vector3 GetClampedCameraPosition(Vector3 desiredCamCenter)
     {
         float cx = Mathf.Clamp(desiredCamCenter.x, minCamX, maxCamX);
