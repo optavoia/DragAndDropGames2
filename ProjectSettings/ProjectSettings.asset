@@ -745,7 +745,13 @@ PlayerSettings:
   XboxOneOverrideIdentityName: 
   XboxOneOverrideIdentityPublisher: 
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    Build: 0
+    Game Performance: 0
+    Legacy Analytics: 0
+    Purchasing: 0
+    UDP: 0
+    Unity Ads: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -767,11 +773,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 3168699d-9476-43d5-adb8-5f1179e05700
+  cloudProjectId: fef8e598-5b34-467f-b14f-d83e2264d162
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: DragAndDropGames
-  organizationId: aleksandr_ostapjuk
+  organizationId: optavoia
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
