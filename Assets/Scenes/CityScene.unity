@@ -1691,7 +1691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &502469173
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1906,8 +1906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcfe6862606bb8d40848feeabf818d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxZoom: 300
-  minZoom: 0
+  minZoom: 150
   puncZoomSpeed: 0.9
   mouseZoomSpeed: 150
   mouseFollowSpeed: 1
@@ -2039,7 +2038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &595577643
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2191,7 +2190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &683459727
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3328,7 +3327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &940251152
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3445,7 +3444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &970715255
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3844,7 +3843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &1046138212
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4428,7 +4427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &1137538117
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4661,7 +4660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &1188469362
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5079,13 +5078,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1310376411}
   - component: {fileID: 1310376410}
-  - component: {fileID: 1310376412}
   - component: {fileID: 1310376413}
   - component: {fileID: 1310376414}
   - component: {fileID: 1310376415}
   - component: {fileID: 1310376416}
   - component: {fileID: 1310376417}
   - component: {fileID: 1310376418}
+  - component: {fileID: 1310376419}
   m_Layer: 0
   m_Name: ScripHolder
   m_TagString: Untagged
@@ -5150,7 +5149,7 @@ MonoBehaviour:
   dropPoints: []
   startCoordinates: []
   assignedDropPoints: []
-  can: {fileID: 0}
+  can: {fileID: 1086768095}
   effects: {fileID: 1520155635}
   audioCli:
   - {fileID: 8300000, guid: c158e252422453544aad3720c9ed3c61, type: 3}
@@ -5183,32 +5182,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1310376412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310376409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26286d33e5c85e147a532d0a5e555c65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  screenPoint: {x: 0, y: 0, z: 0}
-  offset: {x: 0, y: 0, z: 0}
-  minX: 0
-  maxX: 0
-  minY: 0
-  maxY: 0
-  worldBounds:
-    serializedVersion: 2
-    x: -668
-    y: -384
-    width: 1366
-    height: 768
-  padding: 0.02
-  targetCamera: {fileID: 0}
 --- !u!114 &1310376413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5322,6 +5295,32 @@ MonoBehaviour:
   audioSource: {fileID: 1520155635}
   winSound: {fileID: 8300000, guid: 591344bab4613f149a8a819d83d9add4, type: 3}
   loseSound: {fileID: 8300000, guid: 292e8afbb40ea974ca20b1191f429b15, type: 3}
+--- !u!114 &1310376419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310376409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26286d33e5c85e147a532d0a5e555c65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  screenPoint: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: 0}
+  minX: 0
+  maxX: 0
+  minY: 0
+  maxY: 0
+  worldBounds:
+    serializedVersion: 2
+    x: -960
+    y: -540
+    width: 1920
+    height: 1080
+  padding: 0.02
+  targetCamera: {fileID: 519420031}
 --- !u!1 &1319154692
 GameObject:
   m_ObjectHideFlags: 0
@@ -6691,7 +6690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &1657957375
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7256,7 +7255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScr: {fileID: 1310376410}
-  screenBou: {fileID: 1310376412}
+  screenBou: {fileID: 0}
 --- !u!225 &1751996403
 CanvasGroup:
   m_ObjectHideFlags: 0

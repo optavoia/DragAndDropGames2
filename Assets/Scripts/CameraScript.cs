@@ -12,7 +12,6 @@ public class CameraScript : MonoBehaviour
     public float mouseFollowSpeed = 1f, touchPanSpeed = 1f;
     public ScreenBoundriesScript screenBoundries;
     public Camera cam;
-    float startZoom;
     Vector2 lastTouchPos;
     int panFingerId = -1;
     bool isTouchPanning = false;
@@ -37,7 +36,6 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
-        startZoom = cam.orthographicSize;
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
@@ -191,9 +189,10 @@ public class CameraScript : MonoBehaviour
     {
         if (screenBoundries == null || cam == null)
             return;
+
         Rect wb = screenBoundries.worldBounds;
         float maxZoomHeight = wb.height / 2f;
-        float maxZoomWidth = (wb.width / 2f) / cam.aspect;
-        maxZoom = Mathf.Min(maxZoomHeight, maxZoomWidth);
+        float maxZoomWitdth = (wb.width / 2f) / cam.aspect;
+        maxZoom = Mathf.Min(maxZoomHeight, maxZoomWitdth);
     }
 }
