@@ -110,6 +110,7 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
             return; // игнорируем отпускание
 
         ObjectScript.drag = false;
+        ObjectScript.lastDragged = null; // ✅ обязательно сбрасываем
         canvasGro.blocksRaycasts = true;
         canvasGro.alpha = 1.0f;
 

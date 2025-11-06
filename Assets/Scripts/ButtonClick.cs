@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class ButtonClick : MonoBehaviour
 {
+    internal InterstitialAd interactable;
+
     void Start()
     {
         Button button = GetComponent<Button>();
