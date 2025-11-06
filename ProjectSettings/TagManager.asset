@@ -15,6 +15,7 @@ TagManager:
   - Tracktor
   - masina
   - bomb
+  - AdAddButton
   layers:
   - Default
   - TransparentFX
