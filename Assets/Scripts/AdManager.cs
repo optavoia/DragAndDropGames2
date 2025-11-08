@@ -16,10 +16,10 @@ public class AdManager : MonoBehaviour
 
     private void Awake()
     {
-        if(adsInitializer == null)
+        if (adsInitializer == null)
             adsInitializer = FindFirstObjectByType<AdsInitializer>();
 
-        if(Instance != null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -34,11 +34,10 @@ public class AdManager : MonoBehaviour
 
     private void HandleAdsInitialized()
     {
-        if(!turnOffInterstitialAd)
+        if (!turnOffInterstitialAd)
         {
             interstitialAd.OnInterstitialAdReady += HandleInterstitialReady;
             interstitialAd.LoadAd();
-            
         }
     }
 
@@ -46,9 +45,10 @@ public class AdManager : MonoBehaviour
     {
         if (!firstAdShown)
         {
-            Debug.Log("Showing first time interstitial ad automaticaly!");
+            Debug.Log("Showing first time interstitial ad automatically!");
             interstitialAd.ShowAd();
             firstAdShown = true;
+
         }
         else
         {
@@ -59,7 +59,6 @@ public class AdManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-
     }
 
     private void OnDisable()
@@ -70,10 +69,10 @@ public class AdManager : MonoBehaviour
     private bool firstSceneLoad = false;
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if(interstitialAd == null)
+        if (interstitialAd == null)
             interstitialAd = FindFirstObjectByType<InterstitialAd>();
 
-        Button interstitialButton = 
+        Button interstitialButton =
             GameObject.FindGameObjectWithTag("AdAddButton").GetComponent<Button>();
 
         if (interstitialAd != null && interstitialButton != null)
@@ -91,5 +90,4 @@ public class AdManager : MonoBehaviour
         Debug.Log("Scene loaded!");
         HandleAdsInitialized();
     }
-
 }

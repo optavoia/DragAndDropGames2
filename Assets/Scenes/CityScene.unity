@@ -5242,8 +5242,6 @@ GameObject:
   - component: {fileID: 1310376417}
   - component: {fileID: 1310376418}
   - component: {fileID: 1310376419}
-  - component: {fileID: 1310376421}
-  - component: {fileID: 1310376420}
   m_Layer: 0
   m_Name: ScripHolder
   m_TagString: Untagged
@@ -5480,35 +5478,6 @@ MonoBehaviour:
     height: 1080
   padding: 0.02
   targetCamera: {fileID: 519420031}
---- !u!114 &1310376420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310376409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba4833affc2127844b02815ff877440a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _androidAdUnitId: Interstitial_Android
-  isReady: 0
-  _interstitialAdButton: {fileID: 56593767}
---- !u!114 &1310376421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310376409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adad85adc7ef1b94087212979badf128, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _androidGameId: 5979311
-  _testMode: 1
 --- !u!1 &1319154692
 GameObject:
   m_ObjectHideFlags: 0
@@ -7996,7 +7965,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Interstitial_Android
   isReady: 0
-  _interstitialAdButton: {fileID: 56593767}
+  _interstitialAdButton: {fileID: 0}
 --- !u!114 &2000948097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8009,8 +7978,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bdc8d37e1061a54096a3cf82ba3670f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  adsInitializer: {fileID: 1310376421}
-  interstitialAd: {fileID: 1310376420}
+  adsInitializer: {fileID: 2000948094}
+  interstitialAd: {fileID: 2000948096}
   turnOffInterstitialAd: 0
 --- !u!1 &2031197277
 GameObject:

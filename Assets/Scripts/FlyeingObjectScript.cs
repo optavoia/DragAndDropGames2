@@ -200,6 +200,7 @@ public class FlyeingObjectScript : MonoBehaviour
 
         canvasGroup.alpha = 0;
         Destroy(gameObject);
+        
     }
 
     IEnumerator ShrinkAndDestroy(GameObject target, float duration)
@@ -219,6 +220,9 @@ public class FlyeingObjectScript : MonoBehaviour
         }
         // Ko darīt ar māšinu tālāk?
         // Nav obligāti jāiznīcina, varbūt jāatgriež sākuma pozīcijā?
+        // 🚗 Машина "съедена" — уведомляем GameManager
+        GameManager.Instance.CarEaten();
+
         Destroy(target);
     }
 
