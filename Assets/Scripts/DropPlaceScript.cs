@@ -8,6 +8,10 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
     private float xSizeDiff, ySizeDiff;
     public ObjectScript objScript;
 
+    [Header("Допустимые отклонения")]
+    public float maxRotationDiff = 15f;  // допускаем ±15 градусов
+    public float maxSizeDiff = 0.15f;    // допускаем ±15% разницы
+
     void Start()
     {
         if (objScript == null)
@@ -53,9 +57,11 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
             Debug.Log("X size difference: " + xSizeDiff);
             Debug.Log("Y size difference: " + ySizeDiff);
 
+            bool rotationOK = (rotDiff <= maxRotationDiff || rotDiff >= 360 - maxRotationDiff);
+            bool sizeOK = (xSizeDiff <= maxSizeDiff && ySizeDiff <= maxSizeDiff);
+
             // Если объект подходит по размеру и вращению
-            if ((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
-                (xSizeDiff <= 0.05 && ySizeDiff <= 0.05))
+            if (rotationOK && sizeOK)
             {
                 Debug.Log("Correct place");
 

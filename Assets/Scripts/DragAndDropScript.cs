@@ -110,17 +110,17 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
             return; // игнорируем отпускание
 
         ObjectScript.drag = false;
-        //ObjectScript.lastDragged = null; //обязательно сбрасываем
+        
         canvasGro.blocksRaycasts = true;
         canvasGro.alpha = 1.0f;
 
         if (objectScr.rightPlace)
         {
-            // ✅ объект на правильном месте
+            // объект на правильном месте
             ObjectScript.lastDragged = null;
-            canvasGro.blocksRaycasts = true; // блокируем взаимодействие
+            canvasGro.blocksRaycasts = true; 
 
-            // 🔒 блокируем объект, если он встал на своё место
+            // блокируем объект, если он встал на своё место
             if (draggableItem != null)
                 draggableItem.locked = true;
         }

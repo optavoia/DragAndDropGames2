@@ -12,6 +12,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public event Action OnInterstitialAdReady;
     public bool isReady = false;
     [SerializeField] Button _interstitialAdButton;
+    private bool isManualAd = false;  // новый флаг
 
     void Awake()
     {
@@ -48,11 +49,11 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         if (isReady)
         {
-            // Hide banner ad on interstitial ad show...
+            // 🔽 Перед показом — скрываем баннер
+            AdManager.Instance.bannerAd?.HideBanner();
 
             Advertisement.Show(_adUnitId, this);
             isReady = false;
-
         }
         else
         {
@@ -66,6 +67,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         if (AdManager.Instance.interstitialAd != null && isReady)
         {
             Debug.Log("Showing interstitial ad manually!");
+            isManualAd = true;
             ShowAd();
 
         }
@@ -97,18 +99,25 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
-        if (showCompletionState == UnityAdsShowCompletionState.COMPLETED)
+        Debug.Log("Interstitial ad finished — re-show banner");
+        Time.timeScale = 1f;       
+
+        if (isManualAd &&  showCompletionState == UnityAdsShowCompletionState.COMPLETED)
         {
             Debug.Log("Interstitial ad watched completely!");
             StartCoroutine(SlowDownTimeTemporarily(30f));
             LoadAd();
+            AdManager.Instance.bannerAd?.ShowBanner();
 
         }
         else
         {
+            isManualAd = false;
             Debug.Log("Interstitial ad skipped or status ir unknown!");
             LoadAd();
+            AdManager.Instance.bannerAd?.ShowBanner();
         }
+        
     }
 
     private IEnumerator SlowDownTimeTemporarily(float seconds)
@@ -131,7 +140,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsShowStart(string placementId)
     {
         Debug.Log("Showing interstitial ad at this moment!");
-        Time.timeScale = 0f;
+        Time.timeScale = 0f; // ❌ останавливаем игру
     }
 
     public void SetButton(Button button)
