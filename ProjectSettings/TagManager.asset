@@ -16,6 +16,7 @@ TagManager:
   - masina
   - bomb
   - AdAddButton
+  - RewardedButton
   layers:
   - Default
   - TransparentFX

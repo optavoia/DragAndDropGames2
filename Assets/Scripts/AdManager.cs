@@ -2,15 +2,19 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class AdManager : MonoBehaviour
 {
     public AdsInitializer adsInitializer;
     public InterstitialAd interstitialAd;
     [SerializeField] bool turnOffInterstitialAd = false;
     private bool firstAdShown = false;
+
     public BannerAd bannerAd;
     [SerializeField] bool turnOffBannerAd = false;
 
+    public RewardedAds rewardedAds;
+    [SerializeField] bool turnOffRewardedAd = false;
     // .......
 
     public static AdManager Instance { get; private set; }
@@ -45,6 +49,11 @@ public class AdManager : MonoBehaviour
         if (!turnOffBannerAd && bannerAd != null)
         {
             bannerAd.LoadBanner();
+        }
+
+        if (!turnOffRewardedAd)
+        {
+            rewardedAds.LoadAd();
         }
     }
 
@@ -88,6 +97,17 @@ public class AdManager : MonoBehaviour
             interstitialAd.SetButton(interstitialButton);
         }
 
+        if (rewardedAds == null)
+            rewardedAds = FindFirstObjectByType<RewardedAds>();
+
+        Button rewardedAdButton
+            = GameObject.FindGameObjectWithTag("RewardedButton").GetComponent<Button>();
+
+        if (rewardedAds != null && rewardedAdButton != null)
+        {
+            rewardedAds.SetButton(rewardedAdButton);
+        }
+
         // При первом запуске — просто пропускаем
         if (!firstSceneLoad)
         {
@@ -108,6 +128,8 @@ public class AdManager : MonoBehaviour
             Debug.Log("Interstitial not ready yet, loading new one...");
             interstitialAd?.LoadAd();
         }
+
+       
     }
 
 }
