@@ -1,50 +1,50 @@
-﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PegUI : MonoBehaviour
 {
-    // стек дисков (тип DiscUI)
-    public Stack<DiscUI> discs = new Stack<DiscUI>();
+    public RectTransform diskBase;
+    public List<Disk> disks = new List<Disk>();
 
-    public DiscUI TopDisc()
+    public void PushDisk(Disk disk)
     {
-        return discs.Count == 0 ? null : discs.Peek();
+        disks.Add(disk);
+
+        disk.transform.SetParent(diskBase);
+        AnimateDiskToPosition(disk, disks.Count - 1);
     }
 
-    public void AddDisc(DiscUI d)
+    public Disk PopDisk()
     {
-        if (d == null) return;
-        discs.Push(d);
-        PositionDiscs();
+        Disk d = disks[disks.Count - 1];
+        disks.RemoveAt(disks.Count - 1);
+        return d;
     }
 
-    public DiscUI RemoveDisc()
+    public Disk PeekDisk()
     {
-        if (discs.Count == 0) return null;
-        DiscUI removed = discs.Pop();
-        PositionDiscs();
-        return removed;
+        if (disks.Count == 0) return null;
+        return disks[disks.Count - 1];
     }
 
-    public void PositionDiscs()
+    public void AnimateDiskToPosition(Disk disk, int index)
     {
-        float yStep = 60f; // расстояние между дисками
-        DiscUI[] arr = discs.ToArray();
-        Array.Reverse(arr); // чтобы нижний диск был первым
+        Vector2 target = new Vector2(0, index * 60);
+        disk.StartCoroutine(SmoothMove(disk.GetComponent<RectTransform>(), target));
+    }
 
-        RectTransform pegRT = GetComponent<RectTransform>();
+    private System.Collections.IEnumerator SmoothMove(RectTransform rect, Vector2 target)
+    {
+        Vector2 start = rect.anchoredPosition;
+        float t = 0;
 
-        for (int i = 0; i < arr.Length; i++)
+        while (t < 1)
         {
-            RectTransform rt = arr[i].GetComponent<RectTransform>();
-            rt.anchoredPosition = new Vector2(
-                0, // относительно столба по X
-                i * yStep // снизу вверх по Y
-            );
-            rt.localRotation = Quaternion.identity; // сброс поворота
-            rt.SetParent(pegRT, false); // диски должны быть детьми пега
+            t += Time.deltaTime * 4f;
+            rect.anchoredPosition = Vector2.Lerp(start, target, t);
+            yield return null;
         }
-    }
 
+        rect.anchoredPosition = target;
+    }
 }
