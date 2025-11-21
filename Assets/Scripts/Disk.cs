@@ -72,5 +72,10 @@ public class Disk : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     {
         rect.position = startPos;
         transform.SetParent(startParent);
+
+        // Звук ошибки
+        var gm = FindObjectOfType<GameManagerUI>();
+        if (gm != null && gm.audioSource != null && gm.errorSound != null)
+            gm.audioSource.PlayOneShot(gm.errorSound);
     }
 }

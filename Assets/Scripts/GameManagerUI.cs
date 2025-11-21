@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class GameManagerUI : MonoBehaviour
 {
+    [Header("Звуки")]
+    public AudioSource audioSource;
+    public AudioClip errorSound;   // звук неправильного хода
+
     [Header("3 ПРЕФАБА ДИСКОВ (ТВОИ КАРТИНКИ)")]
     public Disk bigDiskPrefab;     // size = 3
     public Disk mediumDiskPrefab;  // size = 2
@@ -15,6 +19,7 @@ public class GameManagerUI : MonoBehaviour
     public PegUI peg1;
     public PegUI peg2;
     public PegUI peg3;
+    
 
     [Header("UI")]
     public Text movesText;
