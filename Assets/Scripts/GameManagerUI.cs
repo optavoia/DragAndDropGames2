@@ -8,6 +8,9 @@ public class GameManagerUI : MonoBehaviour
     public Disk mediumDiskPrefab;  // size = 2
     public Disk smallDiskPrefab;   // size = 1
 
+    [Header("UI внутри панели победы")]
+    public Text winMovesText;
+
     [Header("3 СТОЛБА")]
     public PegUI peg1;
     public PegUI peg2;
@@ -69,7 +72,14 @@ public class GameManagerUI : MonoBehaviour
     private void UpdateMoves()
     {
         if (movesText != null)
-            movesText.text = "Ходы: " + moves;
+            movesText.text = "Moves: " + moves;
+    }
+
+    private void BlockAllDisks()
+    {
+        Disk[] allDisks = FindObjectsOfType<Disk>();
+        foreach (var d in allDisks)
+            d.GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     private void CheckWin()
@@ -79,6 +89,12 @@ public class GameManagerUI : MonoBehaviour
         {
             if (winPanel != null)
                 winPanel.SetActive(true);
+            
+            if (winMovesText != null)
+                winMovesText.text = "Moves: " + moves;
+
+            // чтобы игрок не мог трогать диски после победы
+            BlockAllDisks();
         }
     }
 }
