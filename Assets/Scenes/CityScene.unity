@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _androidAdUnitId: Banner_Android
-  _bannerPosition: 4
+  _bannerPosition: 2
 --- !u!224 &90442921
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3077,7 +3077,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -336, y: -80}
+  m_AnchoredPosition: {x: -1170, y: -76}
   m_SizeDelta: {x: 516.78906, y: 96.737}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &837063560
