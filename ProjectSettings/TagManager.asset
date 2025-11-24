@@ -18,6 +18,7 @@ TagManager:
   - AdAddButton
   - RewardedButton
   - bunnerad
+  - RewardedHanoiButton
   layers:
   - Default
   - TransparentFX

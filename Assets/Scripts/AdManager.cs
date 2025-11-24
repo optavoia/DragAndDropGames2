@@ -17,6 +17,9 @@ public class AdManager : MonoBehaviour
     [SerializeField] bool turnOffRewardedAd = false;
     // .......
 
+    public RewardedAdsHanoi rewardedHanoi;
+    [SerializeField] bool turnOffRewardedHanoi = false;
+
     public static AdManager Instance { get; private set; }
 
 
@@ -55,6 +58,11 @@ public class AdManager : MonoBehaviour
         {
             rewardedAds.LoadAd();
         }
+
+        if (!turnOffRewardedHanoi)
+        {
+            rewardedHanoi.LoadAd();
+        }
     }
 
 
@@ -86,6 +94,17 @@ public class AdManager : MonoBehaviour
     private bool firstSceneLoad = false;    
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Time.timeScale = 1f;
+
+        if (scene.name == "HanojanaScene")
+        {
+            turnOffRewardedAd = true;
+        }
+        else
+        {
+            turnOffRewardedAd = false;
+        }
+
         if (interstitialAd == null)
             interstitialAd = FindFirstObjectByType<InterstitialAd>();
 
@@ -106,6 +125,7 @@ public class AdManager : MonoBehaviour
         if (rewardedAds != null && rewardedAdButton != null)
         {
             rewardedAds.SetButton(rewardedAdButton);
+            rewardedAds.LoadAd();
         }
 
         // При первом запуске — просто пропускаем
@@ -129,7 +149,18 @@ public class AdManager : MonoBehaviour
             interstitialAd?.LoadAd();
         }
 
-       
+       Button RewardAdHanojana =
+            GameObject.FindGameObjectWithTag("RewardedHanoiButton")?.GetComponent<Button>();
+
+        if (!firstSceneLoad)
+        {
+            // загружаем кнопки сразу
+            if (rewardedHanoi != null && RewardAdHanojana != null)
+                rewardedHanoi.LoadAd();
+
+            firstSceneLoad = true;
+            return;
+        }
     }
 
 }

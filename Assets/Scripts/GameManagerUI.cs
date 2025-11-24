@@ -26,6 +26,7 @@ public class GameManagerUI : MonoBehaviour
     public GameObject winPanel;
 
     private int moves = 0;
+    public int freeMoves = 0;
 
     void Start()
     {
@@ -50,6 +51,8 @@ public class GameManagerUI : MonoBehaviour
         SpawnDisk(smallDiskPrefab, peg1);   
     }
 
+
+
     private void ClearPeg(PegUI peg)
     {
         foreach (var d in peg.disks)
@@ -65,6 +68,17 @@ public class GameManagerUI : MonoBehaviour
         d.transform.localScale = Vector3.one;
 
         peg.PushDisk(d);
+    }
+
+    public void OnMoveMade()
+    {
+        if (freeMoves > 0)
+        {
+            freeMoves--;
+            return; // ход не считается
+        }
+
+        moves++; // обычный ход
     }
 
     public void RegisterMove()

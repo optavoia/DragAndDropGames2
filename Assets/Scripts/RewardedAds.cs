@@ -8,26 +8,24 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
     [SerializeField] string _androidAdUnitId = "Rewarded_Android";
     string _adUnitId;
 
-    [SerializeField] string _adUnitId2;
     [SerializeField] Button _rewardedAdButton;
-    public FlyingObjectManager flyingObjectManager;
 
+    private float slowDownDuration = 30f;
+    private bool adLoaded = false;
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         _adUnitId = _androidAdUnitId;
-
-        if(flyingObjectManager == null)
-        {
-            flyingObjectManager = FindFirstObjectByType<FlyingObjectManager>();
-        }
     }
+
+    // ---------------- LOAD ----------------
 
     public void LoadAd()
     {
-        if(!Advertisement.isInitialized)
+        if (!Advertisement.isInitialized)
         {
-            Debug.LogWarning("Tried to load rewarded ad before Unity ads was initialized.");
+            Debug.LogWarning("Rewarded ad tried to load before Unity Ads initialized!");
             return;
         }
 
@@ -37,69 +35,135 @@ public class RewardedAds : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLi
 
     public void OnUnityAdsAdLoaded(string placementId)
     {
-        Debug.Log("Rewarded ad Loaded!");
+        if (placementId != _adUnitId) return;
 
-        if (placementId.Equals(_adUnitId)){
+        Debug.Log("Rewarded ad loaded!");
+
+        // кнопка может ещё НЕ быть найдена
+        if (_rewardedAdButton != null)
+        {
             _rewardedAdButton.interactable = true;
         }
+        else
+        {
+            Debug.LogWarning("RewardedAds: Ad loaded BUT button is NULL! Will try to find again.");
+            TryFindButtonInScene(); // <<<<<<<<<< ДОБАВЛЕНО
+        }
+
     }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
-        Debug.LogWarning("Failed to load rewarded ad!");
-        StartCoroutine(WaitAndLoad(5f));
+        Debug.LogWarning("Rewarded ad failed to load!");
+        StartCoroutine(WaitAndReload(5f));
     }
 
-    public IEnumerator WaitAndLoad(float delay)
+    IEnumerator WaitAndReload(float time)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(time);
         LoadAd();
     }
 
-    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
-    {
-        Debug.LogWarning("Failed to show rewarded ad!");
-        StartCoroutine(WaitAndLoad(5f));
-    }
-
-    public void OnUnityAdsShowStart(string placementId)
-    {
-        Time.timeScale = 0f;
-    }
-
-    public void OnUnityAdsShowClick(string placementId)
-    {
-        Debug.Log("User clicked on rewarded ad");
-    }
-
-    public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
-    {
-        //if(placementId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsCompletionState.COMPLETED))
-        //{
-        Time.timeScale = 1f;
-        Debug.Log("Rewarded ad completed!");
-        flyingObjectManager.DestroyAllFlyingObjects();
-        _rewardedAdButton.interactable = false;
-        StartCoroutine(WaitAndLoad(10f));
-    }
-
-
-    public void SetButton(Button button)
-    {
-        if(button == null)
-        {
-            return;
-        }
-
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(ShowAd);
-        _rewardedAdButton = button;
-        _rewardedAdButton.interactable = false;
-    }
+    // ---------------- SHOW ----------------
 
     public void ShowAd()
     {
         _rewardedAdButton.interactable = false;
         Advertisement.Show(_adUnitId, this);
+    }
+
+    public void OnUnityAdsShowStart(string placementId)
+    {
+        Debug.Log("Rewarded ad started!");
+        Time.timeScale = 0f;  // пауза как в interstitial
+    }
+
+    public void OnUnityAdsShowClick(string placementId)
+    {
+        Debug.Log("Rewarded ad clicked!");
+    }
+
+    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
+    {
+        Debug.LogWarning("Rewarded ad show failed!");
+        StartCoroutine(WaitAndReload(5f));
+    }
+
+    public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
+    {
+        Debug.Log("Rewarded ad completed!");
+
+        // восстановить нормальную скорость
+        Time.timeScale = 1f;
+
+        // замедлить игру на 30 секунд (как interstitial)
+        StartCoroutine(SlowDownForTime(slowDownDuration));
+
+        // перезагрузить
+        StartCoroutine(WaitAndReload(10f));
+    }
+
+    // ---------------- TIME ----------------
+
+    private IEnumerator SlowDownForTime(float seconds)
+    {
+        Time.timeScale = 0.4f;
+
+        float timer = 0f;
+        while (timer < seconds)
+        {
+            // если сменили сцену -> выйти
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "CityScene")
+            {
+                Time.timeScale = 1f;
+                yield break;
+            }
+
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        Time.timeScale = 1f;
+    }
+
+    // ---------------- BUTTON ----------------
+
+    public void SetButton(Button btn)
+    {
+        if (btn == null) return;
+
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(ShowAd);
+        _rewardedAdButton = btn;
+
+        _rewardedAdButton.interactable = false;
+    }
+
+    private void OnEnable()
+    {
+        TryFindButtonInScene();
+
+        if (adLoaded && _rewardedAdButton != null)
+            _rewardedAdButton.interactable = true;
+    }
+
+    private void TryFindButtonInScene()
+    {
+        GameObject btnObj = GameObject.FindGameObjectWithTag("RewardedButton");
+        if (btnObj == null)
+        {
+            Debug.LogWarning("RewardedAds: RewardedButton NOT FOUND in scene!");
+            return;
+        }
+
+        Button btn = btnObj.GetComponent<Button>();
+        if (btn == null)
+        {
+            Debug.LogError("RewardedAds: Button object found but NO Button component!");
+            return;
+        }
+
+        SetButton(btn);
+        Debug.Log("RewardedAds: Button linked successfully!");
     }
 }

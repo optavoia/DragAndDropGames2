@@ -81,8 +81,11 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsAdLoaded(string placementId)
     {
         Debug.Log("Interstitial ad loaded!");
-        _interstitialAdButton.interactable = true;
         isReady = true;
+
+        if (_interstitialAdButton != null)
+            _interstitialAdButton.interactable = true;
+
         OnInterstitialAdReady?.Invoke();
     }
 
@@ -99,36 +102,14 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
-        Debug.Log("Interstitial ad finished — re-show banner");
-        Time.timeScale = 1f;       
+        Debug.Log("Interstitial ad finished");
 
-        if (isManualAd &&  showCompletionState == UnityAdsShowCompletionState.COMPLETED)
-        {
-            Debug.Log("Interstitial ad watched completely!");
-            StartCoroutine(SlowDownTimeTemporarily(30f));
-            LoadAd();
-            AdManager.Instance.bannerAd?.ShowBanner();
+        Time.timeScale = 1f;   // просто возвращаем норму
 
-        }
-        else
-        {
-            isManualAd = false;
-            Debug.Log("Interstitial ad skipped or status ir unknown!");
-            LoadAd();
-            AdManager.Instance.bannerAd?.ShowBanner();
-        }
+        isManualAd = false;
+        LoadAd();
+        AdManager.Instance.bannerAd?.ShowBanner();
         
-    }
-
-    private IEnumerator SlowDownTimeTemporarily(float seconds)
-    {
-        Time.timeScale = 0.4f;
-        Debug.Log("Time slowed down to 0.4x for " + seconds + " sec");
-        yield return new WaitForSeconds(seconds);
-
-        Time.timeScale = 1.0f;
-        Debug.Log("Time restored to normal!");
-
     }
 
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
@@ -152,5 +133,27 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         button.onClick.AddListener(OnInterstitialAdButtonClicked);
         _interstitialAdButton = button;
         _interstitialAdButton.interactable = false;
+    }
+
+    private void OnEnable()
+    {
+        TryFindButton();
+
+        if (isReady && _interstitialAdButton != null)
+            _interstitialAdButton.interactable = true;
+    }
+
+    private void TryFindButton()
+    {
+        GameObject obj = GameObject.FindGameObjectWithTag("AdAddButton");
+        if (obj == null) return;
+
+        Button btn = obj.GetComponent<Button>();
+        if (btn == null) return;
+
+        SetButton(btn);
+
+        if (isReady)
+            _interstitialAdButton.interactable = true;
     }
 }
