@@ -58,8 +58,7 @@ Rules:
 ![https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/Hanonaja.jpg](https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/Hanonaja.jpg)
 ## Hanojana Tornis WinPanel
 ![https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/HanojanaWinPanel.jpg](https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/HanojanaWinPanel.jpg)
-## Hanojana Tornis 3 free moves
-Click on ad button to watch add for free moves
+## Hanojana Tornis 3 free moves button
 ![https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/Rewarded%20ads.jpg](https://github.com/optavoia/DragAndDropGames2/blob/be7bff2d9d407013624aa3cc13ccf56736cbafd9/Assets/Resources/Images/Rewarded%20ads.jpg)
 
 
