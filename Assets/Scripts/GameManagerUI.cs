@@ -70,28 +70,31 @@ public class GameManagerUI : MonoBehaviour
         peg.PushDisk(d);
     }
 
-    public void OnMoveMade()
+    public void AddFreeMoves(int amount)
     {
-        if (freeMoves > 0)
-        {
-            freeMoves--;
-            return; // ход не считается
-        }
-
-        moves++; // обычный ход
+        freeMoves += amount;
+        UpdateMoves();
+        Debug.Log($"[HANOI] Added {amount} free moves. Now freeMoves = {freeMoves}");
     }
 
     public void RegisterMove()
     {
-        moves++;
-        UpdateMoves();
-        CheckWin();
+        if (freeMoves > 0)
+            {
+                freeMoves--;
+                UpdateMoves();
+                return;
+            }
+
+            moves++;
+            UpdateMoves();
+            CheckWin();
     }
 
     private void UpdateMoves()
     {
         if (movesText != null)
-            movesText.text = "Moves: " + moves;
+            movesText.text = $"Moves: {moves}  |  Free: {freeMoves}";
     }
 
     private void BlockAllDisks()

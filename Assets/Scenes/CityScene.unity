@@ -2869,10 +2869,10 @@ RectTransform:
   - {fileID: 1361414706}
   - {fileID: 446816711}
   - {fileID: 837063559}
+  - {fileID: 1169423848}
   - {fileID: 1071024229}
   - {fileID: 1008717437}
   - {fileID: 1184118647}
-  - {fileID: 1169423848}
   m_Father: {fileID: 519420032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7797,7 +7797,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: CityScene
+          m_StringArgument: StartScreen
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1787105449
@@ -8060,7 +8060,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: CityScene
+          m_StringArgument: StartScreen
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1909155860
